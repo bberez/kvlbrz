@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berezovskyi Kovalyuk Architekti</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── Slideshow ─────────────────────────────── */
+    .slideshow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.8s ease;
+    }
+    .slide.active { opacity: 1; }
+
+    /* Tmavý překryv přes celou plochu */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 1;
+    }
+
+    /* ── Layout – 4 rohy ───────────────────────── */
+    .ui {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Společné pro všechny rohové bloky */
+    .corner {
+      position: absolute;
+      pointer-events: all;
+      color: #fff;
+    }
+
+    /* Nahoře vlevo – název firmy */
+    .corner--tl {
+      top: 2.5rem;
+      left: 2.8rem;
+    }
+
+    .firm-name {
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    /* Dole vlevo – Bohdan */
+    .corner--bl {
+      bottom: 2.5rem;
+      left: 2.8rem;
+    }
+
+    /* Dole vpravo – Oleg */
+    .corner--br {
+      bottom: 2.5rem;
+      right: 2.8rem;
+      text-align: right;
+    }
+
+    /* Styl kontaktů */
+    .contact-name {
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-detail {
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .contact-detail a {
+      color: rgba(255, 255, 255, 0.82);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .contact-detail a:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Slideshow pozadí -->
+  <div class="slideshow" id="slideshow">
+    <div class="slide active" style="background-image: url('images/slide1.jpg')"></div>
+    <div class="slide"        style="background-image: url('images/slide2.jpg')"></div>
+    <div class="slide"        style="background-image: url('images/slide3.jpg')"></div>
+    <!--
+      Přidávání dalšího obrázku:
+      <div class="slide" style="background-image: url('images/slide4.jpg')"></div>
+
+      Video místo obrázku:
+      <div class="slide" style="background-image: none">
+        <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover">
+          <source src="images/video1.mp4" type="video/mp4">
+        </video>
+      </div>
+    -->
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay"></div>
+
+  <!-- UI vrstvy -->
+  <div class="ui">
+
+    <!-- Nahoře vlevo: název firmy (nahraď za <img> s .gif) -->
+    <div class="corner corner--tl">
+      <div class="firm-name">Berezovskyi Kovalyuk Architekti</div>
+      <!--
+        Až budeš mít .gif, smaž řádek výše a odkomentuj toto:
+        <img src="images/logo.gif" alt="Berezovskyi Kovalyuk Architekti" style="height: 48px; width: auto;" />
+      -->
+    </div>
+
+    <!-- Dole vlevo: Bohdan -->
+    <div class="corner corner--bl">
+      <div class="contact-name">Bohdan Berezovskyi</div>
+      <div class="contact-detail">
+        777 677 184<br />
+        <a href="mailto:berezovskyi@kvlbrz.com">berezovskyi@kvlbrz.com</a>
+      </div>
+    </div>
+
+    <!-- Dole vpravo: Oleg -->
+    <div class="corner corner--br">
+      <div class="contact-name">Oleg Kovalyuk</div>
+      <div class="contact-detail">
+        773 601 996<br />
+        <a href="mailto:kovalyuk@kvlbrz.com">kovalyuk@kvlbrz.com</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      const slides = document.querySelectorAll('.slide');
+      let current = 0;
+
+      function next() {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+      }
+
+      // Každý slide visí 6 sekund, přechod trvá 1.8 s
+      setInterval(next, 6000);
+    })();
+  </script>
+
+</body>
+</html>
