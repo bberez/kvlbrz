@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Berezovskyi Kovalyuk Architekti</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -12,7 +11,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: 'Inter', sans-serif;
+      /* Apple systémový font */
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     }
 
     /* ── Slideshow ─────────────────────────────── */
@@ -32,15 +32,14 @@
     }
     .slide.active { opacity: 1; }
 
-    /* Tmavý překryv přes celou plochu */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.38);
       z-index: 1;
     }
 
-    /* ── Layout – 4 rohy ───────────────────────── */
+    /* ── UI vrstva ─────────────────────────────── */
     .ui {
       position: fixed;
       inset: 0;
@@ -48,55 +47,56 @@
       pointer-events: none;
     }
 
-    /* Společné pro všechny rohové bloky */
     .corner {
       position: absolute;
       pointer-events: all;
       color: #fff;
     }
 
-    /* Nahoře vlevo – název firmy */
+    /* Nahoře vlevo */
     .corner--tl {
-      top: 2.5rem;
-      left: 2.8rem;
+      top: 3.5rem;
+      left: 4rem;
     }
 
+    /* Dole vlevo */
+    .corner--bl {
+      bottom: 3.5rem;
+      left: 4rem;
+    }
+
+    /* Dole vpravo */
+    .corner--br {
+      bottom: 3.5rem;
+      right: 4rem;
+      text-align: right;
+    }
+
+    /* Název firmy */
     .firm-name {
-      font-size: 1.05rem;
+      font-size: 1.25rem;
       font-weight: 400;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       line-height: 1.4;
       white-space: nowrap;
     }
 
-    /* Dole vlevo – Bohdan */
-    .corner--bl {
-      bottom: 2.5rem;
-      left: 2.8rem;
-    }
-
-    /* Dole vpravo – Oleg */
-    .corner--br {
-      bottom: 2.5rem;
-      right: 2.8rem;
-      text-align: right;
-    }
-
-    /* Styl kontaktů */
+    /* Jméno jednatele */
     .contact-name {
-      font-size: 0.82rem;
+      font-size: 0.95rem;
       font-weight: 500;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.45rem;
     }
 
+    /* Telefon + email */
     .contact-detail {
-      font-size: 0.78rem;
+      font-size: 0.88rem;
       font-weight: 300;
       letter-spacing: 0.03em;
-      line-height: 1.7;
+      line-height: 1.8;
       color: rgba(255, 255, 255, 0.82);
     }
 
@@ -118,7 +118,7 @@
     <div class="slide"        style="background-image: url('images/slide2.jpg')"></div>
     <div class="slide"        style="background-image: url('images/slide3.jpg')"></div>
     <!--
-      Přidávání dalšího obrázku:
+      Přidání dalšího obrázku:
       <div class="slide" style="background-image: url('images/slide4.jpg')"></div>
 
       Video místo obrázku:
@@ -130,18 +130,18 @@
     -->
   </div>
 
-  <!-- Overlay -->
+  <!-- Překryv -->
   <div class="overlay"></div>
 
-  <!-- UI vrstvy -->
+  <!-- Obsah -->
   <div class="ui">
 
-    <!-- Nahoře vlevo: název firmy (nahraď za <img> s .gif) -->
+    <!-- Nahoře vlevo: název firmy -->
     <div class="corner corner--tl">
       <div class="firm-name">Berezovskyi Kovalyuk Architekti</div>
       <!--
-        Až budeš mít .gif, smaž řádek výše a odkomentuj toto:
-        <img src="images/logo.gif" alt="Berezovskyi Kovalyuk Architekti" style="height: 48px; width: auto;" />
+        Až budeš mít .gif, smaž řádek výše a odkomentuj:
+        <img src="images/logo.gif" alt="Berezovskyi Kovalyuk Architekti" style="height: 56px; width: auto;" />
       -->
     </div>
 
@@ -169,14 +169,11 @@
     (function () {
       const slides = document.querySelectorAll('.slide');
       let current = 0;
-
       function next() {
         slides[current].classList.remove('active');
         current = (current + 1) % slides.length;
         slides[current].classList.add('active');
       }
-
-      // Každý slide visí 6 sekund, přechod trvá 1.8 s
       setInterval(next, 6000);
     })();
   </script>
