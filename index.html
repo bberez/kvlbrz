@@ -23,8 +23,6 @@
       opacity: 0; transition: opacity 1.8s ease;
     }
     .slide.active { opacity: 1; }
-
-    /* Lehký závoj – snížen z 0.42 na 0.18 */
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.18); z-index: 1; }
 
     /* ── Intro ─────────────────────────────────── */
@@ -39,10 +37,8 @@
     }
 
     /*
-      Klíčové: .il i .firm-name sdílejí STEJNOU font-size.
-      Díky tomu FLIP animace nepotřebuje scale – písmena
-      se přesunou bez změny velikosti.
-
+      .il a .firm-name sdílejí stejnou font-size →
+      FLIP animace nepotřebuje scale (žádná změna velikosti).
       overflow: hidden je nutné pro animaci šířky (width → 0).
     */
     .il {
@@ -68,8 +64,10 @@
     }
 
     /*
-      firm-name: identická font-size jako .il → FLIP bez škálování.
-      Blurred backdrop: jemné matné sklo 3 px nad/pod, 7 px vlevo/vpravo.
+      KVLBRZ v rohu.
+      Efekt matného skla: text-shadow vytvoří rozmazaný tmavý obrys
+      přímo kolem každého písmene — bez ráměčku, bez boxu.
+      3 vrstvy: ostrá ~2 px + střední ~5 px + měkká ~10 px.
     */
     .firm-name {
       pointer-events: all; color: #fff;
@@ -77,11 +75,10 @@
       font-weight: 700; text-transform: uppercase;
       line-height: 1.2; white-space: nowrap;
       align-self: flex-start;
-      background: rgba(0,0,0,0.30);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 3px 7px;
-      border-radius: 2px;
+      text-shadow:
+        0 0 2px rgba(0,0,0,1),
+        0 0 5px rgba(0,0,0,0.95),
+        0 0 10px rgba(0,0,0,0.75);
       opacity: 0;
     }
     .firm-name.visible { opacity: 1; }
@@ -91,24 +88,29 @@
       display: flex; flex-direction: row;
       justify-content: space-between; align-items: flex-end; width: 100%;
     }
-    .contact {
-      pointer-events: all; color: #fff;
-      background: rgba(0,0,0,0.30);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 4px 9px;
-      border-radius: 2px;
-    }
+    .contact { pointer-events: all; color: #fff; }
     .contact:last-child { text-align: right; }
+
+    /*
+      Totéž pro jméno kontaktu: obrys 2–5 px bez boxu.
+    */
     .contact-name {
       font-size: clamp(0.75rem, 0.82vw, 3rem);
       font-weight: 600; letter-spacing: 0.05em;
       text-transform: uppercase; margin-bottom: 0.45rem;
+      text-shadow:
+        0 0 2px rgba(0,0,0,1),
+        0 0 5px rgba(0,0,0,0.95),
+        0 0 10px rgba(0,0,0,0.75);
     }
     .contact-detail {
       font-size: clamp(0.7rem, 0.75vw, 2.5rem);
       font-weight: 400; letter-spacing: 0.03em;
       line-height: 1.8; color: rgba(255,255,255,0.85);
+      text-shadow:
+        0 0 2px rgba(0,0,0,1),
+        0 0 5px rgba(0,0,0,0.95),
+        0 0 10px rgba(0,0,0,0.75);
     }
     .contact-detail a {
       color: rgba(255,255,255,0.85); text-decoration: none; transition: color 0.25s;
@@ -165,10 +167,6 @@
 
   <!-- Hlavní UI ──────────────────────────────── -->
   <div class="ui">
-    <!--
-      KVLBRZ v rohu – přirozená pozice je levý horní roh.
-      Až bude GIF logo hotové, nahraďte text tagem <img>.
-    -->
     <div class="firm-name" id="firmName">KVLBRZ</div>
 
     <div class="contacts">
@@ -224,19 +222,13 @@
       /* ─ FÁZE 2 (t = 2 s): fade + width collapse ─ */
       setTimeout(function () {
 
-        /*
-          Zafixujeme aktuální šířky jako inline hodnotu PŘED animací.
-          Bez toho by CSS transition neměl výchozí hodnotu a skočil by.
-        */
+        /* Zafixovat šířky před animací */
         var allFade = Array.from(fadeEls).concat(Array.from(spaceEls));
         allFade.forEach(function (el) {
           el.style.width = el.getBoundingClientRect().width + 'px';
         });
-
-        /* Flush – prohlížeč zaregistruje explicitní šířky */
         void introFull.offsetWidth;
 
-        /* Spustit animaci: opacity + width → 0 */
         fadeEls.forEach(function (el) {
           el.style.transition = 'opacity 2s ease, width 2s cubic-bezier(0.4, 0, 0.2, 1)';
           el.style.opacity    = '0';
@@ -247,20 +239,12 @@
           el.style.width      = '0';
         });
 
-        /*
-          Flexbox (justify-content: center) průběžně překresluje rozvržení:
-          jak šířky mizejí, K V L B R Z se plynule srovnávají ke středu.
-        */
-
       }, 2000);
 
       /* ─ FÁZE 3 (t = 4.5 s): FLIP – přesun do rohu ─ */
       setTimeout(function () {
 
-        /*
-          KROK A – Změřit pozici skupiny K V L B R Z (nyní srovnaných
-          ve středu obrazovky). Měříme PŘED jakýmkoli DOM zásahem.
-        */
+        /* A – Změřit pozici skupiny K V L B R Z */
         var rects   = Array.from(keepEls).map(function (el) {
           return el.getBoundingClientRect();
         });
@@ -271,31 +255,16 @@
         var groupCx = (gL + gR) / 2;
         var groupCy = (gT + gB) / 2;
 
-        /*
-          KROK B – Změřit přirozenou pozici firm-name (levý horní roh).
-          (firm-name je opacity:0, ale getBoundingClientRect() funguje.)
-        */
+        /* B – Změřit přirozenou pozici firm-name */
         var fRect  = firmEl.getBoundingClientRect();
         var firmCx = fRect.left + fRect.width  / 2;
         var firmCy = fRect.top  + fRect.height / 2;
 
-        /*
-          KROK C – Vypočítat INVERT transform.
-
-          Chceme posunout firm-name tak, aby její střed ležel
-          na groupCx / groupCy (kde visí intro KVLBRZ).
-
-          Protože font-size je identická (.il == .firm-name),
-          NEPOTŘEBUJEME scale – pouze čistý translate.
-        */
+        /* C – Čistý translate (bez scale – font-size je identická) */
         var dx = groupCx - firmCx;
         var dy = groupCy - firmCy;
 
-        /*
-          KROK D – Synchronní DOM akce (jeden paint snímek):
-            • intro schovám
-            • firm-name okamžitě ukáži na pozici středu (žádný transition)
-        */
+        /* D – Synchronní přepnutí */
         keepEls.forEach(function (el) { el.style.opacity = '0'; });
         introWrap.style.opacity = '0';
 
@@ -303,19 +272,10 @@
         firmEl.style.transform  = 'translate(' + dx + 'px, ' + dy + 'px)';
         firmEl.style.opacity    = '1';
 
-        /*
-          KROK E – Vynutit layout flush.
-          Čtení offsetHeight přiměje prohlížeč dokončit style recalc
-          PŘED přidáním transition – jinak by mohl přeskočit počáteční stav.
-        */
+        /* E – Flush layoutu */
         void firmEl.offsetHeight;
 
-        /*
-          KROK F – Dvojité RAF + spuštění PLAY fáze.
-          • 1. RAF: prohlížeč připraví snímek s počátečním stavem transformace
-          • 2. RAF: přidáme transition a vyčistíme transform
-          → CSS transition plynule přejede firm-name z středu do rohu
-        */
+        /* F – Spustit animaci */
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
             firmEl.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
@@ -323,12 +283,10 @@
           });
         });
 
-        /*
-          KROK G – Úklid po doznění animace (1.5 s + 300 ms rezerva).
-        */
+        /* G – Úklid */
         setTimeout(function () {
           introWrap.remove();
-          firmEl.classList.add('visible'); /* opacity: 1 přes CSS třídu */
+          firmEl.classList.add('visible');
           firmEl.style.transition = '';
           firmEl.style.transform  = '';
           firmEl.style.opacity    = '';
