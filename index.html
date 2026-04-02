@@ -23,7 +23,8 @@
       opacity: 0; transition: opacity 1.8s ease;
     }
     .slide.active { opacity: 1; }
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.18); z-index: 1; }
+    /* Overlay: 0.58 během animace, JS ho sníží na 0.05 při odletu KVLBRZ */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.58); z-index: 1; }
 
     /* ── Intro ─────────────────────────────────── */
     #intro-wrap {
@@ -48,6 +49,9 @@
       font-weight: 700; text-transform: uppercase;
       color: #fff; line-height: 1.2;
       white-space: nowrap; flex-shrink: 0;
+      text-shadow:
+        0 0 2px rgba(30,30,30,0.7),
+        0 0 5px rgba(30,30,30,0.5);
     }
     .il-sp {
       display: inline-block;
@@ -76,9 +80,8 @@
       line-height: 1.2; white-space: nowrap;
       align-self: flex-start;
       text-shadow:
-        0 0 2px rgba(0,0,0,1),
-        0 0 5px rgba(0,0,0,0.95),
-        0 0 10px rgba(0,0,0,0.75);
+        0 0 2px rgba(30,30,30,0.7),
+        0 0 5px rgba(30,30,30,0.5);
       opacity: 0;
     }
     .firm-name.visible { opacity: 1; }
@@ -99,18 +102,16 @@
       font-weight: 600; letter-spacing: 0.05em;
       text-transform: uppercase; margin-bottom: 0.45rem;
       text-shadow:
-        0 0 2px rgba(0,0,0,1),
-        0 0 5px rgba(0,0,0,0.95),
-        0 0 10px rgba(0,0,0,0.75);
+        0 0 2px rgba(30,30,30,0.7),
+        0 0 5px rgba(30,30,30,0.5);
     }
     .contact-detail {
       font-size: clamp(0.7rem, 0.75vw, 2.5rem);
       font-weight: 400; letter-spacing: 0.03em;
       line-height: 1.8; color: rgba(255,255,255,0.85);
       text-shadow:
-        0 0 2px rgba(0,0,0,1),
-        0 0 5px rgba(0,0,0,0.95),
-        0 0 10px rgba(0,0,0,0.75);
+        0 0 2px rgba(30,30,30,0.7),
+        0 0 5px rgba(30,30,30,0.5);
     }
     .contact-detail a {
       color: rgba(255,255,255,0.85); text-decoration: none; transition: color 0.25s;
@@ -275,11 +276,16 @@
         /* E – Flush layoutu */
         void firmEl.offsetHeight;
 
-        /* F – Spustit animaci */
+        /* F – Spustit animaci + synchronně začít zesvětlovat overlay */
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
             firmEl.style.transition = 'transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
             firmEl.style.transform  = 'none';
+
+            /* Overlay: plynulé snížení z 0.58 → 0.05 za stejnou dobu jako let */
+            var overlayEl = document.querySelector('.overlay');
+            overlayEl.style.transition = 'background 1.5s ease';
+            overlayEl.style.background = 'rgba(0,0,0,0.05)';
           });
         });
 
