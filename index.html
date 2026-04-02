@@ -17,45 +17,7 @@
                    'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     }
 
-    /* ── Intro overlay ─────────────────────────── */
-    #intro {
-      position: fixed;
-      inset: 0;
-      background: #0d0d0d;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.7s ease;
-    }
-    #intro.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Intro písmena */
-    .intro-letters {
-      display: flex;
-      align-items: center;
-      gap: 0.05em;
-    }
-    .il {
-      font-size: clamp(3.5rem, 11vw, 6.5rem);
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      display: inline-block;
-      will-change: transform, opacity;
-      /* přechod se aplikuje jen při animaci (ne při inicializaci) */
-      transition: none;
-    }
-    .il.animating {
-      transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1),
-                  opacity  0.7s ease;
-    }
-
-    /* ── Slideshow ─────────────────────────────── */
+    /* ── Slideshow (běží hned od začátku) ──────── */
     .slideshow {
       position: fixed;
       inset: 0;
@@ -76,11 +38,78 @@
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.38);
+      background: rgba(0,0,0,0.45);
       z-index: 1;
     }
 
-    /* ── UI vrstva ─────────────────────────────── */
+    /* ── Intro vrstva ──────────────────────────── */
+    #intro-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    /* Flex kontejner pro písmena */
+    #intro-full {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      flex-wrap: nowrap;
+    }
+
+    /* Každé písmeno = inline-block se schopností komprese */
+    .il {
+      display: inline-block;
+      overflow: hidden;
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700;
+      text-transform: uppercase;   /* fáze 1: vše verzálky */
+      color: #fff;
+      line-height: 1;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Písmena která zůstanou (K V L B R Z) – zdůrazněná */
+    .il-keep {
+      color: #fff;
+    }
+
+    /* Písmena co zmizí – v HTML malá, phase 1 zobrazena jako verzálky přes CSS */
+    .il-fade {
+      color: rgba(255,255,255,0.75);
+    }
+
+    /* Mezera */
+    .il-sp {
+      display: inline-block;
+      overflow: hidden;
+      width: 0.35em;
+      flex-shrink: 0;
+    }
+
+    /* KVLBRZ – fáze 3, začíná neviditelný, absolutně centrovaný */
+    #intro-kvlbrz {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ── Hlavní UI ─────────────────────────────── */
     .ui {
       position: fixed;
       inset: 0;
@@ -92,24 +121,21 @@
       justify-content: space-between;
     }
 
-    /* ── Název firmy ───────────────────────────── */
     .firm-name {
       pointer-events: all;
       color: #fff;
       font-size: 1.25rem;
-      font-weight: 600;          /* tučnější */
+      font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       line-height: 1.4;
       white-space: nowrap;
       align-self: flex-start;
-      /* skrytý dokud intro neskončí */
       opacity: 0;
-      transition: opacity 0.7s ease;
+      transition: opacity 0.35s ease;
     }
     .firm-name.visible { opacity: 1; }
 
-    /* ── Kontakty ─────────────────────────────── */
     .contacts {
       display: flex;
       flex-direction: row;
@@ -117,80 +143,53 @@
       align-items: flex-end;
       width: 100%;
     }
-
-    .contact {
-      pointer-events: all;
-      color: #fff;
-    }
+    .contact { pointer-events: all; color: #fff; }
     .contact:last-child { text-align: right; }
 
     .contact-name {
       font-size: 0.95rem;
-      font-weight: 600;          /* tučnější */
+      font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       margin-bottom: 0.45rem;
     }
     .contact-detail {
       font-size: 0.88rem;
-      font-weight: 400;          /* bylo 300, teď čitelnější */
+      font-weight: 400;
       letter-spacing: 0.03em;
       line-height: 1.8;
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(255,255,255,0.85);
     }
     .contact-detail a {
-      color: rgba(255, 255, 255, 0.85);
+      color: rgba(255,255,255,0.85);
       text-decoration: none;
       transition: color 0.25s;
     }
     .contact-detail a:hover { color: #fff; }
 
-    /* ── Mobilní layout ────────────────────────── */
+    /* ── Mobil ─────────────────────────────────── */
     @media (max-width: 680px) {
       .ui { padding: 2.2rem 1.8rem; }
-
-      .firm-name {
-        font-size: 1rem;
-        white-space: normal;
-        max-width: 5.5rem;
-        line-height: 1.6;
-      }
-
-      .contacts {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1.4rem;
-      }
+      .firm-name { font-size: 1rem; white-space: normal; max-width: 5.5rem; line-height: 1.6; }
+      .contacts { flex-direction: column; align-items: flex-start; gap: 1.4rem; }
       .contact:last-child { text-align: left; }
-
-      .contact-name  { font-size: 0.85rem; }
+      .contact-name   { font-size: 0.85rem; }
       .contact-detail { font-size: 0.80rem; }
+      .il { font-size: clamp(1.3rem, 5vw, 1.8rem); }
+      #intro-kvlbrz { font-size: clamp(1.3rem, 5vw, 1.8rem); }
     }
   </style>
 </head>
 <body>
 
-  <!-- ═══ Intro animace ════════════════════════ -->
-  <div id="intro">
-    <div class="intro-letters">
-      <span class="il" id="il-k">K</span>
-      <span class="il" id="il-v">V</span>
-      <span class="il" id="il-l">L</span>
-      <span class="il" id="il-b">B</span>
-      <span class="il" id="il-r">R</span>
-      <span class="il" id="il-z">Z</span>
-    </div>
-  </div>
-
-  <!-- ═══ Slideshow ════════════════════════════ -->
+  <!-- ═══ Slideshow – startuje okamžitě ════════ -->
   <div class="slideshow">
-    <div class="slide active" style="background-image: url('images/slide1.jpg')"></div>
-    <div class="slide"        style="background-image: url('images/slide2.jpg')"></div>
-    <div class="slide"        style="background-image: url('images/slide3.jpg')"></div>
+    <div class="slide active" style="background-image:url('images/slide1.jpg')"></div>
+    <div class="slide"        style="background-image:url('images/slide2.jpg')"></div>
+    <div class="slide"        style="background-image:url('images/slide3.jpg')"></div>
     <!--
-      Přidání obrázku:
-      <div class="slide" style="background-image: url('images/slide4.jpg')"></div>
-
+      Přidat obrázek:
+      <div class="slide" style="background-image:url('images/slide4.jpg')"></div>
       Video:
       <div class="slide" style="background-image:none">
         <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover">
@@ -199,26 +198,37 @@
       </div>
     -->
   </div>
-
-  <!-- Překryv -->
   <div class="overlay"></div>
 
-  <!-- ═══ Obsah ════════════════════════════════ -->
+  <!-- ═══ Intro – centrovaný název (fáze 1+2) ══ -->
+  <!--
+    Struktura: KOVALYUK (K,V,L zůstanou) BEREZOVSKYI (B,R,Z zůstanou) ARCHITEKTI (vše zmizí)
+    il-keep = zůstane jako KVLBRZ
+    il-fade = zmizí a stlačí se
+    il-sp   = mezera (také zmizí)
+  -->
+  <div id="intro-wrap">
+    <div id="intro-full">
+      <span class="il il-keep">K</span><span class="il il-fade">o</span><span class="il il-keep">V</span><span class="il il-fade">a</span><span class="il il-keep">L</span><span class="il il-fade">y</span><span class="il il-fade">u</span><span class="il il-fade">k</span><span class="il-sp"></span><span class="il il-keep">B</span><span class="il il-fade">e</span><span class="il il-keep">R</span><span class="il il-fade">e</span><span class="il il-keep">Z</span><span class="il il-fade">o</span><span class="il il-fade">v</span><span class="il il-fade">s</span><span class="il il-fade">k</span><span class="il il-fade">y</span><span class="il il-fade">i</span><span class="il-sp"></span><span class="il il-fade">a</span><span class="il il-fade">r</span><span class="il il-fade">c</span><span class="il il-fade">h</span><span class="il il-fade">i</span><span class="il il-fade">t</span><span class="il il-fade">e</span><span class="il il-fade">k</span><span class="il il-fade">t</span><span class="il il-fade">i</span>
+    </div>
+  </div>
+
+  <!-- KVLBRZ (fáze 3) -->
+  <div id="intro-kvlbrz">KVLBRZ</div>
+
+  <!-- ═══ Hlavní UI ════════════════════════════ -->
   <div class="ui">
 
-    <!-- Nahoře vlevo: název firmy -->
     <div class="firm-name" id="firmName">
       Berezovskyi Kovalyuk Architekti
       <!--
-        Až budeš mít .gif, smaž řádek výše a odkomentuj:
+        Až budeš mít .gif:
         <img src="images/logo.gif" alt="Berezovskyi Kovalyuk Architekti"
              style="height:56px;width:auto;display:block;" />
       -->
     </div>
 
-    <!-- Dole: kontakty -->
     <div class="contacts">
-
       <div class="contact">
         <div class="contact-name">Bohdan Berezovskyi</div>
         <div class="contact-detail">
@@ -226,7 +236,6 @@
           <a href="mailto:berezovskyi@kvlbrz.com">berezovskyi@kvlbrz.com</a>
         </div>
       </div>
-
       <div class="contact">
         <div class="contact-name">Oleg Kovalyuk</div>
         <div class="contact-detail">
@@ -234,85 +243,112 @@
           <a href="mailto:kovalyuk@kvlbrz.com">kovalyuk@kvlbrz.com</a>
         </div>
       </div>
-
     </div>
+
   </div>
 
   <script>
     /* ── Slideshow ──────────────────────────────── */
     (function () {
       const slides = document.querySelectorAll('.slide');
-      let current = 0;
+      let cur = 0;
       function next() {
-        slides[current].classList.remove('active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('active');
+        slides[cur].classList.remove('active');
+        cur = (cur + 1) % slides.length;
+        slides[cur].classList.add('active');
       }
       setInterval(next, 6000);
     })();
 
     /* ── Intro animace ──────────────────────────── */
     (function () {
-      const intro    = document.getElementById('intro');
-      const firmEl   = document.getElementById('firmName');
+      const introWrap   = document.getElementById('intro-wrap');
+      const introFull   = document.getElementById('intro-full');
+      const introKvlbrz = document.getElementById('intro-kvlbrz');
+      const firmEl      = document.getElementById('firmName');
 
-      // Pořadí: K V L B R Z
-      // KVL → KOVALYUK (druhé slovo v názvu, ~55 % šířky textu)
-      // BRZ → BEREZOVSKYI (první slovo, ~15 % šířky textu)
-      const letterIds = ['il-k','il-v','il-l','il-b','il-r','il-z'];
-      const letters   = letterIds.map(id => document.getElementById(id));
+      const fadeEls = introFull.querySelectorAll('.il-fade, .il-sp');
+      const keepEls = introFull.querySelectorAll('.il-keep');
 
-      function runAnimation() {
-        // Souřadnice cílového textu (firma name je v DOM, jen neviditelná)
-        const fr = firmEl.getBoundingClientRect();
+      // ── FÁZE 2 (t=1200ms): stlačení + cross-fade ─
+      function phase2() {
 
-        // Cílová středová pozice pro KVL → KOVALYUK oblast
-        const kovalX = fr.left + fr.width * 0.58;
-        const kovalY = fr.top  + fr.height * 0.5;
-
-        // Cílová středová pozice pro BRZ → BEREZOVSKYI oblast
-        const bereX  = fr.left + fr.width * 0.18;
-        const bereY  = fr.top  + fr.height * 0.5;
-
-        // Rozestup písmen v cíli
-        const spread = 6;
-
-        const targets = [
-          // K, V, L → KOVALYUK
-          { x: kovalX - spread * 1, y: kovalY },
-          { x: kovalX,              y: kovalY },
-          { x: kovalX + spread * 1, y: kovalY },
-          // B, R, Z → BEREZOVSKYI
-          { x: bereX - spread * 1,  y: bereY  },
-          { x: bereX,               y: bereY  },
-          { x: bereX + spread * 1,  y: bereY  },
-        ];
-
-        // Spuštění přechodů
-        letters.forEach((el, i) => {
-          const r  = el.getBoundingClientRect();
-          const cx = r.left + r.width  / 2;
-          const cy = r.top  + r.height / 2;
-          const tx = targets[i].x - cx;
-          const ty = targets[i].y - cy;
-
-          el.classList.add('animating');
-          el.style.transform = `translate(${tx}px, ${ty}px) scale(0.12)`;
-          el.style.opacity   = '0';
+        // 1. Nastavit explicitní šířky pro animaci → 0
+        fadeEls.forEach(el => {
+          el.style.width = el.getBoundingClientRect().width + 'px';
         });
 
-        // Zobrazení názvu firmy během příletu písmen
-        setTimeout(() => firmEl.classList.add('visible'), 650);
+        // Drobná pauza aby prohlížeč "viděl" explicitní šířky
+        requestAnimationFrame(() => requestAnimationFrame(() => {
 
-        // Fade out intro overlay
-        setTimeout(() => {
-          intro.classList.add('hidden');
-          setTimeout(() => intro.remove(), 750);
-        }, 1000);
+          // 2. Písmena co zmizí: přejdou na malá, zmenší šířku na 0 a ztransparentní
+          fadeEls.forEach(el => {
+            el.style.textTransform = 'lowercase';
+            el.style.transition    = 'width 0.5s ease, opacity 0.35s ease';
+            el.style.width         = '0';
+            el.style.opacity       = '0';
+          });
+
+          // 3. Zachovaná písmena: mírně ztmavit (zůstanou viditelná)
+          keepEls.forEach(el => {
+            el.style.transition = 'letter-spacing 0.5s ease';
+          });
+
+          // 4. intro-full fade-out od t=+300ms
+          setTimeout(() => {
+            introFull.style.transition = 'opacity 0.25s ease';
+            introFull.style.opacity    = '0';
+          }, 300);
+
+          // 5. KVLBRZ fade-in od t=+200ms
+          setTimeout(() => {
+            introKvlbrz.style.transition = 'opacity 0.3s ease';
+            introKvlbrz.style.opacity    = '1';
+          }, 200);
+
+          // 6. Fáze 3 po 600ms
+          setTimeout(phase3, 600);
+        }));
       }
 
-      // Drž KVLBRZ 2 sekundy, pak animuj
-      setTimeout(runAnimation, 2000);
+      // ── FÁZE 3 (t=1800ms): KVLBRZ letí do levého horního rohu (0,2s) ─
+      function phase3() {
+        const kv   = introKvlbrz.getBoundingClientRect();
+        const firm = firmEl.getBoundingClientRect();
+
+        // Výpočet: element má position:fixed; top:50%; left:50%
+        // Takže "base" pozice top-left = (50vw, 50vh) před transformem
+        const vwH = window.innerWidth  / 2;
+        const vhH = window.innerHeight / 2;
+        const w   = kv.width;
+        const h   = kv.height;
+
+        // Cílová velikost = výška firmName textu
+        const scale = Math.min(firm.height / h, 1);
+
+        // Aby vizuální top-left KVLBRZ sedl na firm.left, firm.top:
+        const tx = firm.left - vwH + w * (scale - 1) / 2;
+        const ty = firm.top  - vhH + h * (scale - 1) / 2;
+
+        introKvlbrz.style.transition      = 'transform 0.2s ease, opacity 0.15s ease';
+        introKvlbrz.style.transformOrigin = 'center center';
+        introKvlbrz.style.transform       = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
+
+        // Zobraz firm name a schovej KVLBRZ
+        setTimeout(() => {
+          firmEl.classList.add('visible');
+          introKvlbrz.style.opacity = '0';
+        }, 120);
+
+        // Úklid
+        setTimeout(() => {
+          introWrap.remove();
+          introKvlbrz.remove();
+        }, 500);
+      }
+
+      // ── Start: fáze 1 drží 1200ms ──────────────
+      setTimeout(phase2, 1200);
     })();
   </script>
 
