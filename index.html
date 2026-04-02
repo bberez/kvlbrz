@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Safari lišta + pozadí při načítání = černá -->
+  <meta name="theme-color" content="#000000" />
   <title>Berezovskyi Kovalyuk Architekti</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -11,6 +13,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      background: #000; /* černé pozadí – žádné bílé záblesky */
       /* Apple systémový font */
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     }
@@ -20,6 +23,7 @@
       position: fixed;
       inset: 0;
       z-index: 0;
+      background: #000; /* záloha když se obrázek ještě načítá */
     }
 
     .slide {
@@ -27,6 +31,7 @@
       inset: 0;
       background-size: cover;
       background-position: center;
+      background-color: #000; /* žádné šedé/modré záblesky mezi slidy */
       opacity: 0;
       transition: opacity 1.8s ease;
     }
